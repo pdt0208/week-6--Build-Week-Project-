@@ -23,7 +23,24 @@ _One line each, with the role that would own it and an hour estimate. These beco
 | | | | |
 
 ## What did we cut, and why?
+lanned feature
 
-_Anything you planned and dropped, with the reason. A cut you explain is not a gap._
+Reason for cutting or postponing
 
-<!-- answer:3 -->
+Deep learning models
+Not necessary for the current proof of concept; simpler models are easier to compare, explain and validate.
+
+Real-time PMS integration
+Requires access to hotel systems and live booking data, which are outside the current project scope.
+
+Mobile application
+The project focuses on a working recommendation pipeline rather than building a separate application.
+
+Automatic room allocation and guest relocation
+These decisions require operational information and human approval beyond cancellation prediction.
+
+Dynamic pricing
+Pricing optimisation is a separate business problem from nightly overbooking recommendations.
+
+Advanced customer segmentation
+Not required for the core hotel-night recommendation and could increase project complexity.
