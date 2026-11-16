@@ -12,4 +12,4 @@ Write your own answer before you read the AI's recommended answer. When you acce
 
 ## What did we learn from being grilled?
 
-_Three sentences: the question that hurt most, what it exposed, and what we now do differently._
+The most difficult question was whether our system could genuinely make predictions 14 days before hotel arrival. It exposed the limitation that our dataset contains final booking information rather than booking snapshots from earlier dates. We will now clearly distinguish the current MVP demonstration from a genuine production forecasting system, freeze the safety buffer before proof evaluation, and reject any method that violates the client's walk ceiling.
