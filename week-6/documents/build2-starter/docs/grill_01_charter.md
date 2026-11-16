@@ -1,15 +1,17 @@
-# Which questions did the grilling ask about the charter and the RFP skeleton, and what changed?
+# Which questions did the grilling ask about the PRD and the build plan, and what changed?
 
-**Owner:** Client Lead. **When:** Tuesday, 45 minutes of grilling and then the edits. **Tool used:** _write it here_. **Full chat:** the file in `ai_logs/` it came from.
+**Owner:** Build Lead. **When:** Thursday, 45 minutes of grilling and then the edits. **Tool used:** Claude (claude.ai chat). **Full chat:** `ai_logs/grill_02_prd_chat.md`.
 
 Write your own answer before you read the AI's recommended answer. When you accept a recommendation, say why in the last column. At least three rows must show a change to a document.
 
 | Q | Question, as asked | AI's recommended answer | Our answer | Accepted, changed or rejected | What changed, in which document |
 |---|---|---|---|---|---|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
+| 1 | The model's feature list has `arrival_date_year`, week number, day of month, `distribution_channel` and the company ID. Your column table says drop them. Which is right? | The column table. The proof period is all 2017, a year the model never saw in training, so a year column can only hurt. Rebuild from the bin-1 list and re-run. | The model notebook uses 26 features including all five. The column table keeps 13 bin-1 columns plus `arrival_dow` and `has_company`. | Accepted: the column table has the evidence (decision D11 and the drop-one reasoning). | `docs/PRD.md` names the feature set as the column table's. `docs/BUILD_PLAN.md` gets a step: re-run `backtest.py` on bin-1 columns only and compare with proof AUC 0.8346. |
+| 2 | Why GBDT and not logistic regression? Logistic is simpler and walks fewer guests. | Choose by euros under the ceiling, not by AUC. The simpler model wins unless the gain is large, and name the number that flips the choice. | GBDT costs EUR 1,625,177 on the proof period against EUR 2,291,077 for logistic regression: EUR 665,900 less (29%). Walks per 1,000 are 7.78 against 5.53, both under the ceiling of 10. | Accepted: the gain is large and the ceiling is met. | `docs/PRD.md` options section: two ways (the flat rule and the learned model), the choice, and the flip condition "if proof walks exceed 10 per 1,000, fall back to logistic regression". |
+| 3 | The buffer z is 0.0 for three of the four models. Is that a choice or the edge of the search? | The search runs from 0 to 3, so 0.0 is inside the range and real. But the spread assumes bookings cancel independently, and groups cancel together, so check the headroom. | z was chosen once on the choose period and frozen. GBDT walks 7.78 per 1,000 on the proof period against a ceiling of 10, so the headroom is 2.22. Rows with a twin cancel at 58.4%, so the spread is probably too narrow. | Changed: we keep z frozen, but we no longer call the buffer safe. | `docs/PRD.md` limits section states the headroom and the independence assumption. `docs/ROADMAP.md` Week 8: group-aware buffer. |
+| 4 | Can a teammate reproduce the table with one command? | No, if the model lives only in a notebook with copied constants. Import `src/contract.py` and put the model in `src/backtest.py` and `src/nightly.py`. | `Model.ipynb` copies the scoring constants and functions from `contract.py` and reads `hotels_model_ready.csv`. `nightly.py` has to run `--from 2017-08-18 --nights 14`. | Accepted: a copied constant can drift from the client's rule. | `docs/BUILD_PLAN.md`: move the model into `src/`, import `contract.py`, delete the copied constants, and run both commands from a clean clone. |
+| 5 | What does the MVP read on the morning the table is made? | Name the rows as well as the columns: bookings that exist on that morning, not bookings made afterwards. | The MVP reads only bin-1 columns, but it scores every booking due on a night, as the client's scoring rule does. Rows made after the table date are included. | Accepted with a caveat: a true as-of table is production work. | `docs/PRD.md` production additions list the as-of-date snapshot; `docs/ROADMAP.md` Week 7. |
 
 ## What did we learn from being grilled?
 
-_Three sentences: the question that hurt most, what it exposed, and what we now do differently._
+The question that hurt most was the feature list, because the model notebook still held five columns that our own column table had already dropped. It exposed that the Data Lead's decisions and the Model Lead's code had drifted apart without anyone noticing, and that the 0.8346 proof AUC belongs to the wrong feature set until we re-run it. We now build the model from one list in `src/features.py`, and the challenger checks that list against `docs/COLUMNS.md` before signing.
