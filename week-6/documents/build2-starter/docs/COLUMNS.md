@@ -32,7 +32,7 @@ To prevent target and post-booking data leakage, every column in the raw `hotels
 | 18 | `previous_cancellations` | **Bin 1** | **Included** | Count of prior canceled bookings by the guest profile at booking time. |
 | 19 | `previous_bookings_not_canceled` | **Bin 1** | **Included** | Count of prior honored stays by the guest profile at booking time. |
 | 20 | `reserved_room_type` | **Bin 1** | **Included** | Room category originally booked by the guest. |
-| 21 | `assigned_room_type` | **Bin 2 / 3** | Excluded | Frequently updated at check-in or during pre-arrival room allocation. |
+| 21 | `assigned_room_type` | **Bin 3** | Excluded | Frequently updated at check-in or during pre-arrival room allocation. |
 | 22 | `booking_changes` | **Bin 2** | Excluded | Accumulates post-booking modifications over the lead-time window. |
 | 23 | `deposit_type` | **Bin 1** | **Included** | Deposit policy (`No Deposit`, `Non Refund`, `Refundable`) set at booking. |
 | 24 | `agent` | **Bin 1** | **Included** | Travel agency ID (`"None"` preserved); IDs with $<300$ train rows grouped into `"Other"`. |
